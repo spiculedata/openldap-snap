@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+#       /etc/rc.d/init.d/ns-slapd
+# ns-slapd      This shell script takes care of starting and stopping
+#               ns-slapd (the Fedora Directory Server)
+#
+# Author: Brian Jones  
+#
+# chkconfig: 2345 13 87
+# description: ns-slapd is the Fedora Directory Service daemon. \
+# FDS can serve as a repository for (and, subsequently, a source of) \
+# data for most of the resources listed in /etc/nsswitch.conf, such as \
+# passwd or group entries.
+
+# Source function library.
+#. /etc/init.d/functions
+
+echo $SNAP
+SLAPD_DIR=${SNAP}/libexec/
+PIDFILE=${SNAP_DATA}/var/run/slapd.pid
+STARTPIDFILE=
+
+
+start() {
+        echo -n "Starting Fedora Directory Server: "
+        if [ -f $PIDFILE ]; then
+                PID=`cat $PIDFILE`
+                echo ns-slapd already running: $PID
+                exit 2;
+        else
+                cd $SLAPD_DIR
+                ./slapd -F ${SNAP_DATA}/etc/slapd.d > /tmp/out.log
+                RETVAL=$?
+                echo
+                [ $RETVAL -eq 0 ] && touch /var/lock/subsys/ns-slapd
+                return $RETVAL
+        fi
+
+}
+
+stop() {
+        echo -n "Shutting down Fedora Directory Server: "
+        echo
+        PID=`cat $PIDFILE`
+        kill -9 $PID
+        echo
+        rm -f ${SNAP_DATA}/var/run/slapd.pid
+        return 0
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status ns-slapd
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage:  {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+exit $?

@@ -12,9 +12,10 @@ confinement: devmode # use 'strict' once you have the right plugs and slots
 
 apps:
   slapd:
-    command: libexec/slapd -F ${SNAP_DATA}/etc/slapd.d
-  slapd-config: 
-    command: bin/install-slapd.sh
+    command: slapd-init
+    command: slapd-init start
+    stop-command: slapd-init stop
+    daemon: forking
 
 parts:
   openldap:
@@ -32,5 +33,5 @@ parts:
         organize:
             slapd.ldif: etc/openldap/
             core.ldif: etc/openldap/
-            install.sh: bin/install-slapd.sh
+            slapd-init: bin/
         after: [openldap]
