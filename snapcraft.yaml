@@ -1,0 +1,36 @@
+name: openldap
+version: '2.4.45'
+summary: Single-line elevator pitch for your amazing snap # 79 char long summary
+description: |
+  This is my-snap's description. You have a paragraph or two to tell the
+  most important story about your snap. Keep it under 100 words though,
+  we live in tweetspace and your description wants to look good in the snap
+  store.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  slapd:
+    command: libexec/slapd -F ${SNAP_DATA}/etc/slapd.d
+  slapd-config: 
+    command: bin/install-slapd.sh
+
+parts:
+  openldap:
+    plugin: autotools
+    source: ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-2.4.45.tgz
+    build-packages:
+      - libdb5.3
+      - libdb5.3-dev 
+      - libdb5.3-dbg
+    snap:
+     - -etc/openldap/slapd.ldif
+  environment:
+        plugin: dump
+        source: .
+        organize:
+            slapd.ldif: etc/openldap/
+            core.ldif: etc/openldap/
+            install.sh: bin/install-slapd.sh
+        after: [openldap]

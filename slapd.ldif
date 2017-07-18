@@ -1,0 +1,27 @@
+dn: cn=config
+objectClass: olcGlobal
+cn: config
+olcArgsFile: /var/snap/openldap/current/var/run/slapd.args
+olcPidFile: /var/snap/openldap/current/var/run/slapd.pid
+
+dn: cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: schema
+
+include: file:///snap/openldap/current/etc/openldap/schema/core.ldif
+
+dn: olcDatabase=frontend,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcFrontendConfig
+olcDatabase: frontend
+
+dn: olcDatabase=mdb,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcMdbConfig
+olcDatabase: mdb
+olcSuffix: dc=my-domain,dc=com
+olcRootDN: cn=Manager,dc=my-domain,dc=com
+olcRootPW: secret
+olcDbDirectory: /var/snap/openldap/current/var/openldap-data
+olcDbIndex: objectClass eq
+
