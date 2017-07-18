@@ -7,15 +7,15 @@ description: |
   we live in tweetspace and your description wants to look good in the snap
   store.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+grade: devel
+confinement: devmode
 
 apps:
   slapd:
-    command: slapd-init
-    command: slapd-init start
-    stop-command: slapd-init stop
+    command: bin/slapd-init start
+    stop-command: bin/slapd-init stop
     daemon: forking
+    plugs: [network, network-bind, mount-observe, home, removable-media]
 
 parts:
   openldap:

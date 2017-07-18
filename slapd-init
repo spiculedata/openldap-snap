@@ -29,7 +29,13 @@ start() {
                 exit 2;
         else
                 cd $SLAPD_DIR
-                ./slapd -F ${SNAP_DATA}/etc/slapd.d > /tmp/out.log
+                if [ ! -d ${SNAP_DATA}/etc/slapd.d ]; then
+                  mkdir -p ${SNAP_DATA}/etc/slapd.d
+                  mkdir -p ${SNAP_DATA}/var/openldap-data
+                  mkdir -p ${SNAP_DATA}/var/run
+                  ${SNAP}/sbin/slapadd -n 0 -F ${SNAP_DATA}/etc/slapd.d -l ${SNAP}/etc/openldap/slapd.ldif
+                fi
+                ./slapd -F ${SNAP_DATA}/etc/slapd.d
                 RETVAL=$?
                 echo
                 [ $RETVAL -eq 0 ] && touch /var/lock/subsys/ns-slapd
@@ -40,7 +46,6 @@ start() {
 
 stop() {
         echo -n "Shutting down Fedora Directory Server: "
-        echo
         PID=`cat $PIDFILE`
         kill -INT $PID
         echo
