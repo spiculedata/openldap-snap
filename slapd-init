@@ -42,7 +42,7 @@ stop() {
         echo -n "Shutting down Fedora Directory Server: "
         echo
         PID=`cat $PIDFILE`
-        kill -9 $PID
+        kill -INT $PID
         echo
         rm -f ${SNAP_DATA}/var/run/slapd.pid
         return 0
