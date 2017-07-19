@@ -29,7 +29,7 @@ parts:
      - -etc/openldap/slapd.ldif
   environment:
         plugin: dump
-        source: .
+        source: snap/
         organize:
             slapd.ldif: etc/openldap/
             core.ldif: etc/openldap/
