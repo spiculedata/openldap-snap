@@ -1,5 +1,11 @@
 #!/bin/sh
 
+
+pword=$(snapctl get password)
+
+
+
+
 output=$(snapctl get fail)
 if [ "$output" = "true" ]; then
 	echo "Failing as requested."

@@ -11,6 +11,17 @@ grade: devel
 confinement: devmode
 
 apps:
+  apache:
+    command: run-httpd -k start -DFOREGROUND
+    stop-command: run-httpd -k stop
+    daemon: simple
+    restart-condition: always
+    plugs: [network, network-bind]
+  php-fpm:
+    command: start-php-fpm
+    daemon: simple
+    restart-condition: always
+    plugs: [network, network-bind, removable-media]
   slapd:
     command: bin/slapd-init start
     stop-command: bin/slapd-init stop
@@ -25,6 +36,13 @@ parts:
       - libdb5.3
       - libdb5.3-dev 
       - libdb5.3-dbg
+    stage-packages:
+      - openssl
+      - libsasl2-2
+      - libsasl2-dev
+      - libsasl2-modules
+      - libsasl2-modules-gssapi-heimdal
+      - libsasl2-modules-gssapi-mit
     snap:
      - -etc/openldap/slapd.ldif
   environment:
@@ -35,3 +53,121 @@ parts:
             core.ldif: etc/openldap/
             slapd-init: bin/
         after: [openldap]
+  ldapphp:
+    plugin: dump
+    source: https://sourceforge.net/projects/phpldapadmin/files/phpldapadmin-php5/1.2.3/phpldapadmin-1.2.3.zip/download
+    source-type: zip
+    organize:
+      'phpldapadmin-1.2.3/*': htdocs/
+      '.htaccess': htdocs/.htaccess
+    filesets:
+      exclude:
+        - -htdocs/lib/functions.php
+        - -htdocs/lib/ds_ldap.php
+        - -htdocs/lib/PageRender.php
+  ldap-customizations:
+    plugin: copy
+    files:
+      src/ldap/ds_ldap.php: htdocs/lib/ds_ldap.php
+      src/ldap/functions.php: htdocs/lib/functions.php
+      src/ldap/PageRender.php: htdocs/lib/PageRender.php
+      src/ldap/config.php: htdocs/config/config.php
+
+
+  apache:
+    plugin: apache
+    source: http://ftp.wayne.edu/apache/httpd/httpd-2.4.27.tar.bz2
+    #source-checksum: sha256/71fcc128238a690515bd8174d5330a5309161ef314a326ae45c7c15ed139c13a
+    modules:
+      - headers
+      - proxy
+      - proxy_fcgi
+      - setenvif
+      - env
+      - rewrite
+      - mime
+      - dir
+      - authz_core
+      - unixd
+      - alias
+      - ssl
+      - socache_shmcb
+    filesets:
+      exclude:
+        - -man
+        - -manual
+        - -htdocs
+        - -include
+        - -build
+        - -conf/httpd.conf
+        - -conf/magic
+        - -conf/original
+        - -conf/extra
+        - -bin/apachectl
+        - -bin/envvars*
+    stage:
+      - $exclude
+    prime:
+      - $exclude
+
+  apache-customizations:
+    plugin: copy
+    files:
+      src/apache/scripts/*: bin/
+      src/apache/conf/*: conf/
+      src/apache/utilities/*: utilities/
+
+  php:
+    plugin: php
+    source: http://us1.php.net/get/php-7.0.21.tar.bz2/from/this/mirror
+    source-checksum: sha256/2ba133c392de6f86aacced8c54e0adefd1c81d3840ac323b9926b8ed3dc6231f
+    source-type: tar
+    install-via: prefix
+    configflags:
+      - --enable-fpm
+      - --disable-cgi
+      - --disable-phar
+      - --disable-phpdbg
+      - --enable-ctype
+      - --enable-mbstring
+      - --enable-zip
+      - --with-pdo-mysql
+      - --with-zlib
+      - --with-gd
+      - --with-bz2
+      - --with-mcrypt
+      - --enable-intl
+      - --with-jpeg-dir=/usr/lib
+      - --disable-rpath
+      - --with-gettext
+      - --with-ldap
+      - --with-ldap-sasl
+    stage-packages:
+      # These are only included here until the OS snap stabilizes
+      - libxml2
+      - libpng12-0
+    build-packages:
+      - libldb-dev
+      - libldap2-dev
+      - libldap-2.4-2 
+      - libxml2-dev
+      - libcurl4-openssl-dev
+      - libpng12-dev
+      - libbz2-dev
+      - libmcrypt-dev
+      - libssl-dev
+      - pkg-config
+      - gettext
+    prime:
+     - -sbin/
+     - -etc/
+    organize:
+      # Put php-fpm in bin with everything else, not sbin.
+      sbin/php-fpm: bin/php-fpm
+  php-customizations:
+    plugin: copy
+    files:
+      src/php/config/*: config/php/
+      src/php/scripts/*: bin/
+      src/php/utilities/*: utilities/
+    stage-packages: [mawk]
