@@ -65,6 +65,10 @@ parts:
         - -htdocs/lib/functions.php
         - -htdocs/lib/ds_ldap.php
         - -htdocs/lib/PageRender.php
+    stage:
+      - $exclude
+    prime:
+      - $exclude
   ldap-customizations:
     plugin: copy
     files:
@@ -72,7 +76,7 @@ parts:
       src/ldap/functions.php: htdocs/lib/functions.php
       src/ldap/PageRender.php: htdocs/lib/PageRender.php
       src/ldap/config.php: htdocs/config/config.php
-
+    after: [ldapphp]
 
   apache:
     plugin: apache
@@ -141,12 +145,12 @@ parts:
       - --disable-rpath
       - --with-gettext
       - --with-ldap
-      - --with-ldap-sasl
     stage-packages:
       # These are only included here until the OS snap stabilizes
       - libxml2
       - libpng12-0
     build-packages:
+      - libjpeg9-dev
       - libldb-dev
       - libldap2-dev
       - libldap-2.4-2 
@@ -164,6 +168,7 @@ parts:
     organize:
       # Put php-fpm in bin with everything else, not sbin.
       sbin/php-fpm: bin/php-fpm
+    build: "./configure --prefix=/root/openldap-snap/parts/php/install --enable-fpm --disable-cgi --disable-phar --disable-phpdbg --enable-ctype --enable-mbstring --enable-zip --with-pdo-mysql --with-zlib --with-gd --with-bz2 --with-mcrypt --enable-intl --with-jpeg-dir=/usr/lib --disable-rpath --with-gettext --with-ldap && sed -i '/^EXTRA_LIBS/ s/$/ -llber/' Makefile && make && make install"
   php-customizations:
     plugin: copy
     files:
