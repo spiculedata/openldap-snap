@@ -47,6 +47,8 @@ parts:
       - libsasl2-modules
       - libsasl2-modules-gssapi-heimdal
       - libsasl2-modules-gssapi-mit
+      - libldb-dev
+      - libldap2-dev
     snap:
      - -etc/openldap/slapd.ldif
   environment:
