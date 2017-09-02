@@ -172,7 +172,7 @@ parts:
     organize:
       # Put php-fpm in bin with everything else, not sbin.
       sbin/php-fpm: bin/php-fpm
-    build: "./configure --prefix=/root/openldap-snap/parts/php/install --enable-fpm --disable-cgi --disable-phar --disable-phpdbg --enable-ctype --enable-mbstring --enable-zip --with-pdo-mysql --with-zlib --with-gd --with-bz2 --with-mcrypt --enable-intl --with-jpeg-dir=/usr/lib --disable-rpath --with-gettext --with-ldap && sed -i '/^EXTRA_LIBS/ s/$/ -llber/' Makefile && make && make install"
+    build: "ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so && ./configure --prefix=/root/openldap-snap/parts/php/install --enable-fpm --disable-cgi --disable-phar --disable-phpdbg --enable-ctype --enable-mbstring --enable-zip --with-pdo-mysql --with-zlib --with-gd --with-bz2 --with-mcrypt --enable-intl --with-jpeg-dir=/usr/lib --disable-rpath --with-gettext --with-ldap && sed -i '/^EXTRA_LIBS/ s/$/ -llber/' Makefile && make && make install"
   php-customizations:
     plugin: copy
     files:
