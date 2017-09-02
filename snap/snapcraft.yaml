@@ -36,6 +36,8 @@ parts:
       - libdb5.3
       - libdb5.3-dev 
       - libdb5.3-dbg
+      - groff 
+      - groff-base
     stage-packages:
       - openssl
       - libsasl2-2
