@@ -9,6 +9,9 @@ objectClass: olcSchemaConfig
 cn: schema
 
 include: file:///snap/openldap/current/etc/openldap/schema/core.ldif
+include: file:///snap/openldap/current/etc/openldap/schema/cosine.ldif
+include: file:///snap/openldap/current/etc/openldap/schema/inetorgperson.ldif
+include: file:///snap/openldap/current/etc/openldap/schema/nis.ldif
 
 dn: olcDatabase=frontend,cn=config
 objectClass: olcDatabaseConfig
