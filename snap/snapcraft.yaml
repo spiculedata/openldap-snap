@@ -151,6 +151,8 @@ parts:
       # These are only included here until the OS snap stabilizes
       - libxml2
       - libpng12-0
+      - libldb-dev
+      - libldap2-dev
     build-packages:
       - libjpeg9-dev
       - libldb-dev
@@ -164,8 +166,6 @@ parts:
       - libssl-dev
       - pkg-config
       - gettext
-      - libldb-dev
-      - libldap2-dev
     prime:
      - -sbin/
      - -etc/
