@@ -22,4 +22,5 @@ jobs:
       - setup_remote_docker 
        
       # run tests!
+      - run: apt -y update
       - run: /run.sh
