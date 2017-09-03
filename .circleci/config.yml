@@ -22,4 +22,4 @@ jobs:
       - setup_remote_docker 
        
       # run tests!
-      run: /run.sh
+      - run: /run.sh
