@@ -1,13 +1,9 @@
-# Java Maven CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
 version: 2
 jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:8-jdk
+      - image: buggtb/circleci-snapcraft
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -18,35 +14,11 @@ jobs:
 
     environment:
       # Customize the JVM maximum heap limit
-      MAVEN_OPTS: -Xmx3200m
+      
     
     steps:
       - checkout
 
-      - setup_remote_docker 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "pom.xml" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      #- run: mvn dependency:go-offline
-
-        
+      #- setup_remote_docker 
+       
       # run tests!
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: mvn -Pdocker-build -s .circleci/settings.xml -DskipTests deploy
-
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
-      - store_artifacts:
-          path: saiku-bi-platform-plugin-p6/target/
-      - store_artifacts:
-          path: saiku-bi-platform-plugin-p7/target/
-      - store_artifacts:
-          path: saiku-server/target/
-      - store_artifacts:
-          path: saiku-bi-platform-plugin-p7.1/target/
